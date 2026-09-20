@@ -16,6 +16,10 @@ create/list/update/revoke. Core admits administrators and passes their trusted
 principal/catalog. These methods are not directly published business APIs.
 `toolframe-dashboard-auth` supplies presentation through core's protected API.
 
+New passwords accept 8–32 characters; omitted passwords generate a random
+32-character secret. Existing longer passwords issued by 0.1.0 can still log in.
+This policy change requires no data migration and retains active sessions.
+
 Active secret uniqueness is transactional. Expired/revoked secrets can be reused
 in a new record with a new grant; old sessions remain tied to the old record.
 Revoked records cannot be restored. Editing a grant invalidates its sessions.

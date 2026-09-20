@@ -9,7 +9,7 @@ import pytest
 from toolframe_sdk import PluginError, Principal, RuntimeContext, call_context
 from toolframe_storage_sqlite.plugin import ADMIN_SERVICE, SQL_SERVICE, SqliteProvider
 
-from toolframe_auth.crypto import lookup
+from toolframe_auth.crypto import lookup, new_verifier
 from toolframe_auth.plugin import SERVICE, AuthProvider, plugin
 
 CATALOG = {
@@ -219,7 +219,7 @@ async def test_delegation_scope_target_and_expiry_bounds(auth):
 async def test_no_plaintext_or_fast_unkeyed_lookup_and_generated_once(auth):
     created = await create(auth, password=None)
     secret = created["password"]
-    assert len(secret) >= 32
+    assert len(secret) == 32
     with caller():
         listing = await auth.invoke(SERVICE, "list", {})
         record = await auth.get(created["credential"]["id"])
@@ -242,3 +242,33 @@ async def test_malformed_inputs_are_typed_denials(auth):
             with pytest.raises(PluginError) as problem:
                 await auth.invoke(SERVICE, method, params)
             assert problem.value.code == "invalid_request"
+
+
+@pytest.mark.parametrize("secret", ["", "a" * 7, "a" * 33, "a" * 1024])
+async def test_new_password_length_rejected_without_a_record(auth, secret):
+    with pytest.raises(PluginError, match="8–32") as problem:
+        await create(auth, password=secret)
+    assert problem.value.code == "invalid_request"
+    with caller():
+        assert (await auth.invoke(SERVICE, "list", {}))["credentials"] == []
+
+
+@pytest.mark.parametrize("secret", ["a" * 8, "a" * 32, "密" * 8])
+async def test_new_password_length_boundaries_can_log_in(auth, secret):
+    created = await create(auth, password=secret)
+    session = await login(auth, secret)
+    assert session["principal"]["credential_id"] == created["credential"]["id"]
+
+
+async def test_existing_long_password_remains_usable(auth):
+    # Simulate a credential issued by 0.1.0 without changing its stored schema.
+    created = await create(auth)
+    secret = "previously-issued-long-password-" * 3
+    salt, encoded = new_verifier(secret)
+    with caller():
+        await auth.store.execute(
+            "UPDATE credentials SET lookup=?, salt=?, verifier=? WHERE id=?",
+            [lookup(auth.key, secret), salt, encoded, created["credential"]["id"]],
+        )
+    session = await login(auth, secret)
+    assert session["principal"]["credential_id"] == created["credential"]["id"]

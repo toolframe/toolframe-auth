@@ -285,9 +285,9 @@ class AuthProvider(Plugin):
         generated = secret is None
         if generated:
             secret = secrets.token_urlsafe(24)
-        if not valid_text(secret) or not 12 <= len(secret) <= 1024:
+        if not valid_text(secret) or not 8 <= len(secret) <= 32:
             raise PluginError(
-                "invalid_request", "Passwords must contain 12–1024 characters"
+                "invalid_request", "Passwords must contain 8–32 characters"
             )
         index = lookup(self.key, secret)
         salt, encoded = await self.hash_work(new_verifier, secret)
