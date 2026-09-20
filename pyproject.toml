@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "toolframe-auth"
+version = "0.1.0"
+description = "Managed access passwords and sessions for Toolframe"
+requires-python = ">=3.14"
+dependencies = ["toolframe-sdk==0.2.0"]
+
+[project.entry-points."toolframe.plugins"]
+auth = "toolframe_auth.plugin:plugin"
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "pytest-asyncio>=1,<2", "ruff>=0.12,<1", "toolframe-storage-sqlite==0.2.0"]
+
+[tool.uv.sources]
+toolframe-sdk = { path = "../toolframe-sdk", editable = true }
+toolframe-storage-sqlite = { path = "../toolframe-storage-sqlite", editable = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py314"
