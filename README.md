@@ -42,6 +42,10 @@ uv run ruff check src tests
 uv build --wheel
 ```
 
+For the same isolated lint, tests, distribution and wheel-install checks used by
+GitHub Actions, run `python3.14 scripts/ci.py`. See [CI and publishing](docs/ci.md)
+for pinned sibling sources, local requirements and TestPyPI/PyPI setup.
+
 Core 0.3's authentication documentation specifies public-by-default behavior,
 explicit public fallback on active auth failure/disablement, normal reload waits,
 local control and the independently public MCP/llms/business API entrances.
