@@ -3,6 +3,9 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 dist/
+/build/
+/.coverage
+/htmlcov/
 
 # Local working documents, issue state, and development worktrees.
 /.local/
