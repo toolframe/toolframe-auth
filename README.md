@@ -45,3 +45,7 @@ uv build --wheel
 Core 0.3's authentication documentation specifies public-by-default behavior,
 explicit public fallback on active auth failure/disablement, normal reload waits,
 local control and the independently public MCP/llms/business API entrances.
+
+## License
+
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
