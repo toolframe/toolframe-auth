@@ -1,7 +1,7 @@
 # Toolframe Auth
 
-Authentication and grant decisions for named access passwords, without user
-accounts. This independent provider owns `auth`'s managed SQLite; it never opens
+Authentication and grant decisions for access passwords, federated users and
+revocable agent delegation. This provider owns `auth`'s managed SQLite; it never opens
 database files itself. It requires SDK 0.2 and `toolframe.storage.sql`.
 
 Core supplies the private `password-lookup` key separately from configuration.
@@ -18,7 +18,42 @@ principal/catalog. These methods are not directly published business APIs.
 
 New passwords accept 8–32 characters; omitted passwords generate a random
 32-character secret. Existing longer passwords issued by 0.1.0 can still log in.
-This policy change requires no data migration and retains active sessions.
+The password-length policy preserves existing password records and sessions.
+
+## Federated users and agent grants
+
+Enable `toolframe-oidc-auth` for OIDC login. Auth remains the local identity and
+permission authority; it does not implement provider discovery or OAuth endpoints.
+Configure the trusted plugin ID with `identity_provider` (default `oidc-auth`) and
+initial admission with exact `federated_identities` entries:
+
+```toml
+[plugins.auth.config]
+identity_provider = "oidc-auth"
+federated_identities = [
+  { issuer = "https://accounts.google.com", subject = "VERIFIED_SUB", label = "Alice", scopes = ["notes.read"] },
+]
+```
+
+The trusted plugin must supply verified issuer/subject claims. No email matching
+or automatic account merging occurs. The admission entry creates a local user
+once; later permission/disablement changes use the protected user-management API.
+Changing admission configuration does not overwrite existing users. Every user
+gets `system.auth.self`; `system.auth.users` permits bounded administration.
+
+The internal service additionally implements `federated_login`, `users`,
+`user_update`, `grant_create`, `grant_check`, `grants` and `revoke_grant`.
+Core verifies administrative/self-service callers; only the configured identity
+provider may admit external identities or issue/check delegated grants.
+Agent grants include user, issuer, client, resource, explicit business scopes and
+expiry. Grant checks intersect current user permissions. Revocation does not end
+the browser session; disabling a user invalidates sessions and revokes all their
+agent grants. Password and MCP-key credentials retain their independent behavior.
+
+This feature introduces additive **store revision v2**. Existing v1 stores require
+Core's explicit `migrate plan auth` / `migrate apply auth --plan-id ...` workflow
+after staging a compatible Auth build. Back up the store and retained secrets
+first. The migration leaves existing password/session tables intact.
 
 Active secret uniqueness is transactional. Expired/revoked secrets can be reused
 in a new record with a new grant; old sessions remain tied to the old record.
@@ -46,9 +81,10 @@ For the same isolated lint, tests, distribution and wheel-install checks used by
 GitHub Actions, run `python3.14 scripts/ci.py`. See [CI and publishing](docs/ci.md)
 for pinned sibling sources, local requirements and TestPyPI/PyPI setup.
 
-Core 0.3's authentication documentation specifies public-by-default behavior,
-explicit public fallback on active auth failure/disablement, normal reload waits,
-local control and the independently public MCP/llms/business API entrances.
+Core owns access policy. Its compatible OIDC integration supports
+`access.failure_mode = "closed"` for protected deployments; the default preserves
+legacy public business fallback. MCP, llms and explicitly public business APIs
+have independent policies.
 
 ## License
 

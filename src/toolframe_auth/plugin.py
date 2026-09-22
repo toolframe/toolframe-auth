@@ -24,6 +24,9 @@ from toolframe_sdk import (
 )
 
 from .crypto import lookup, new_verifier, session_digest, verifier
+from .identities import METHODS as IDENTITY_METHODS
+from .identities import SCHEMA as IDENTITY_SCHEMA
+from .identities import IdentityAuthority
 
 SERVICE = "toolframe.auth"
 SCHEMA = """
@@ -99,6 +102,7 @@ class AuthProvider(Plugin):
         self.idle = context.config.get("session_idle_seconds", 86400)
         self.lifetime = context.config.get("session_max_seconds", 604800)
         self.pending_hashes = 0
+        self.identities = IdentityAuthority(self)
 
     async def activate(self):
         self.key = bytes.fromhex(self.context.private_secrets["password-lookup"])
@@ -191,11 +195,21 @@ class AuthProvider(Plugin):
         if method == "create":
             return await self.create(params)
         async with self.lock:
+            if method in IDENTITY_METHODS:
+                return await self.identities.invoke(method, params)
             if method == "resolve":
+                if isinstance(params.get("token"), str) and params["token"].startswith(
+                    "tf_user_"
+                ):
+                    return await self.identities.resolve(params)
                 return await self.resolve(params)
             if method == "logout":
                 await self.store.execute(
                     "UPDATE sessions SET invalidated=1 WHERE digest=?",
+                    [session_digest(params["token"])],
+                )
+                await self.store.execute(
+                    "UPDATE user_sessions SET invalidated=1 WHERE digest=?",
                     [session_digest(params["token"])],
                 )
                 return {}
@@ -411,6 +425,7 @@ plugin = PluginDefinition(
                     "list",
                     "update",
                     "revoke",
+                    *IDENTITY_METHODS,
                 )
             }
         )
@@ -418,6 +433,29 @@ plugin = PluginDefinition(
     config_schema={
         "type": "object",
         "properties": {
+            "identity_provider": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]{0,63}$",
+            },
+            "federated_identities": {
+                "type": "array",
+                "maxItems": 10000,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": ["issuer", "subject", "label", "scopes"],
+                    "properties": {
+                        "issuer": {"type": "string", "minLength": 1, "maxLength": 2048},
+                        "subject": {"type": "string", "minLength": 1, "maxLength": 255},
+                        "label": {"type": "string", "minLength": 1, "maxLength": 120},
+                        "scopes": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "uniqueItems": True,
+                        },
+                    },
+                },
+            },
             "session_idle_seconds": {
                 "type": "integer",
                 "minimum": 1,
@@ -432,6 +470,10 @@ plugin = PluginDefinition(
         "additionalProperties": False,
     },
     store=StoreSchema(
-        revision="v1", migrations=(Migration(revision="v1", sql=SCHEMA),)
+        revision="v2",
+        migrations=(
+            Migration(revision="v1", sql=SCHEMA),
+            Migration(revision="v2", parent="v1", sql=IDENTITY_SCHEMA),
+        ),
     ),
 )

@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ vars.TOOLFRAME_REPOSITORY_OWNER || github.repository_owner }}/toolframe-sdk
-          ref: ef15b3575615839f24b2710beb3e40f9ae3ca2aa
+          ref: 833c415bd3a4f75613613d4f148d7a3a41a9528c
           path: toolframe-sdk
           token: ${{ secrets.TOOLFRAME_DEPENDENCIES_TOKEN || github.token }}
           persist-credentials: false
