@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ vars.TOOLFRAME_REPOSITORY_OWNER || github.repository_owner }}/toolframe-sdk
-          ref: 833c415bd3a4f75613613d4f148d7a3a41a9528c
+          ref: 121e60eb5ba77717a382cd474c7a31d2de086d13
           path: toolframe-sdk
           token: ${{ secrets.TOOLFRAME_DEPENDENCIES_TOKEN || github.token }}
           persist-credentials: false
@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ vars.TOOLFRAME_REPOSITORY_OWNER || github.repository_owner }}/toolframe-storage-sqlite
-          ref: a6c3148a5079f78c935b434a60f6cbb62489ded7
+          ref: 3812ccbc33beff87e03c93b750f750413c0786bd
           path: toolframe-storage-sqlite
           token: ${{ secrets.TOOLFRAME_DEPENDENCIES_TOKEN || github.token }}
           persist-credentials: false

@@ -282,7 +282,7 @@ wheels = [
 
 [[package]]
 name = "toolframe-auth"
-version = "0.1.1"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "toolframe-sdk" },
@@ -309,7 +309,7 @@ dev = [
 
 [[package]]
 name = "toolframe-sdk"
-version = "0.2.0"
+version = "0.3.0"
 source = { editable = "../toolframe-sdk" }
 dependencies = [
     { name = "jsonschema" },
@@ -331,7 +331,7 @@ dev = [
 
 [[package]]
 name = "toolframe-storage-sqlite"
-version = "0.2.0"
+version = "0.3.0"
 source = { editable = "../toolframe-storage-sqlite" }
 dependencies = [
     { name = "toolframe-sdk" },
