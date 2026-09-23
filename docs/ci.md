@@ -14,7 +14,7 @@ never used or modified.
 
 | Repository | Required commit |
 | --- | --- |
-| `toolframe-sdk` | `121e60eb5ba77717a382cd474c7a31d2de086d13` |
+| `toolframe-sdk` | `a9000ab6ad9743a8f68b5ae3ef7c54fdbf15d6de` |
 | `toolframe-storage-sqlite` | `3812ccbc33beff87e03c93b750f750413c0786bd` |
 
 By default, both repositories are siblings of this checkout. Use `--sdk-repo`
