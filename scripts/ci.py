@@ -16,8 +16,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEPENDENCIES = {
-    "toolframe-sdk": "833c415bd3a4f75613613d4f148d7a3a41a9528c",
-    "toolframe-storage-sqlite": "a6c3148a5079f78c935b434a60f6cbb62489ded7",
+    "toolframe-sdk": "f256b14d796c819174368b3bb98c0dabeb4bdc21",
+    "toolframe-storage-sqlite": "d7fdceb211eae5b124369b6ac197a7bc171e1b8f",
 }
 
 
