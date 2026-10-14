@@ -14,8 +14,8 @@ never used or modified.
 
 | Repository | Required commit |
 | --- | --- |
-| `toolframe-sdk` | `871416a9f9cbcfa79298235781ff193e1ad08a12` |
-| `toolframe-storage-sqlite` | `165d69b90d0ee6c1b77a9122a5fa90ae1ec5b868` |
+| `toolframe-sdk` | `ef91b609137a5fe7bae8e0c893e74b096ff06ffe` |
+| `toolframe-storage-sqlite` | `67c3b0ac4365db81c6c866083330c6405f299dfd` |
 
 By default, both repositories are siblings of this checkout. Use `--sdk-repo`
 and `--storage-repo` to point to other local clones. Internet access is required
@@ -78,26 +78,7 @@ not rebuild the distributions. Duplicate uploads fail; existing files are not
 silently skipped. Publish runs for the same tag and index are serialized without
 cancelling an in-progress run.
 
-## External publishing setup
+## Publication
 
-1. Make these workflows available on the GitHub repository's default branch and
-   include them on the release tag, together with `scripts/ci.py`. Enable Actions
-   and the pinned actions used here.
-2. Create GitHub environments named exactly `testpypi` and `pypi`. Configure
-   suitable reviewers and tag restrictions for each environment.
-3. In each index separately, configure a Trusted Publisher for `toolframe-auth`
-   (or a pending publisher if the project does not yet exist): the actual GitHub
-   owner, repository `toolframe-auth`, workflow filename `publish.yml`, and the
-   matching environment name. No PyPI API token is required.
-4. Ensure `toolframe-sdk==0.2.0` is available from the index consumers use before
-   expecting an ordinary index installation to work. CI currently supplies its
-   pinned wheel locally; uploading auth does not upload SDK or SQLite. For a
-   TestPyPI install, obtain trusted dependencies from PyPI or a controlled local
-   wheelhouse rather than assuming TestPyPI mirrors them.
-5. Create and push the matching version tag when authorized, then dispatch
-   **Publish Python package** on that tag. Select TestPyPI first; select PyPI in
-   a separate manual run when ready.
-
-See the official [uv GitHub Actions guide](https://docs.astral.sh/uv/guides/integration/github/),
-[PyPI Trusted Publishing guide](https://docs.pypi.org/trusted-publishers/using-a-publisher/)
-and [GitHub runner reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
+See [releasing](releasing.md) for dependency order, private repository access,
+Trusted Publisher bindings, version tags and consumer installation checks.

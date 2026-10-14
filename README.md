@@ -1,8 +1,20 @@
 # Toolframe Auth
 
 Authentication and grant decisions for access passwords, federated users and
-revocable agent delegation. This provider owns `auth`'s managed SQLite; it never opens
-database files itself. It requires SDK 0.2 and `toolframe.storage.sql`.
+revocable agent delegation. This provider owns `auth`'s managed SQL store; it never opens
+database files itself. It requires SDK 0.3.0 and `toolframe.storage.sql`.
+
+## Install
+
+With a running Toolframe application and an active SQL storage provider:
+
+```sh
+toolframe --home APP plugin add pypi:toolframe-auth==0.2.0 --enable
+```
+
+The [Entry Register template](https://github.com/toolframe/toolframe-core#readme)
+includes Auth and Dashboard Auth. The host resolves the SDK and the plugin's
+isolated environment automatically.
 
 Core supplies the private `password-lookup` key separately from configuration.
 Credential records store a keyed HMAC-SHA256 lookup plus a per-record salted
@@ -85,6 +97,8 @@ Core owns access policy. Its compatible OIDC integration supports
 `access.failure_mode = "closed"` for protected deployments; the default preserves
 legacy public business fallback. MCP, llms and explicitly public business APIs
 have independent policies.
+
+For release validation and Trusted Publisher setup, see [releasing](docs/releasing.md).
 
 ## License
 
