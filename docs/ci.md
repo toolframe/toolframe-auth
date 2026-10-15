@@ -51,8 +51,8 @@ uses editable installs or `--no-deps`.
 
 ## GitHub Actions
 
-`ci.yml` runs for pushes, pull requests, manual dispatch and calls from the
-publish workflow. It runs the local script on `ubuntu-24.04`, Python 3.14.7 and
+`ci.yml` runs for pushes to `main`, pull requests, manual dispatch and calls from
+the publish workflow. It runs the local script on `ubuntu-24.04`, Python 3.14.7 and
 uv 0.12.8, then stores `toolframe-auth-dist` for seven days. Validation has a
 20-minute timeout and read-only `contents` permission. Action versions are
 pinned to full commit SHAs. The reusable workflow has no concurrency group that
