@@ -99,7 +99,7 @@ class AuthProvider(Plugin):
         super().__init__(context)
         self.lock = asyncio.Lock()
         self.key = None
-        self.store = context.storage()
+        self.store = context.sql()
         self.idle = context.config.get("session_idle_seconds", 86400)
         self.lifetime = context.config.get("session_max_seconds", 604800)
         self.pending_hashes = 0
@@ -413,7 +413,7 @@ plugin = PluginDefinition(
     factory="toolframe_auth.plugin:AuthProvider",
     authorization=AuthorizationSpec(),
     private_secrets=("password-lookup",),
-    requires={"storage": Requirement(service="toolframe.storage.sql")},
+    requires={"sql": Requirement(service="toolframe.sql")},
     services={
         SERVICE: ServiceSpec(
             methods={
