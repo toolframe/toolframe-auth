@@ -106,7 +106,7 @@ Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) and [NOTI
 
 ## PostgreSQL storage
 
-Version 0.2 requires SDK 0.3 and declares PostgreSQL migration SQL alongside the
+Version 0.3 requires SDK 0.4 and declares PostgreSQL migration SQL alongside the
 unchanged SQLite history. Provision this plugin’s stable store owner with the
 PostgreSQL provider before enabling it. The application still runs one Core;
 retain its private keys and configuration with the application home. Existing
