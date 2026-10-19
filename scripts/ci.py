@@ -16,8 +16,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEPENDENCIES = {
-    "toolframe-sdk": "ef91b609137a5fe7bae8e0c893e74b096ff06ffe",
-    "toolframe-storage-sqlite": "67c3b0ac4365db81c6c866083330c6405f299dfd",
+    "toolframe-sdk": "2cd153ec36c585a9adb5ad566effc2985d9e222d",
+    "toolframe-sql-sqlite": "a2764f83840fb8ad71d7eaf138c7e09799ce19bd",
 }
 
 
@@ -57,7 +57,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sdk-repo", type=Path, default=ROOT.parent / "toolframe-sdk")
     parser.add_argument(
-        "--storage-repo", type=Path, default=ROOT.parent / "toolframe-storage-sqlite"
+        "--storage-repo", type=Path, default=ROOT.parent / "toolframe-sql-sqlite"
     )
     parser.add_argument(
         "--output", type=Path, help="Empty directory for validated artifacts"
@@ -110,7 +110,7 @@ def main():
         wheelhouse = workspace / "dependency-wheels"
         for name, repository in (
             ("toolframe-sdk", args.sdk_repo),
-            ("toolframe-storage-sqlite", args.storage_repo),
+            ("toolframe-sql-sqlite", args.storage_repo),
         ):
             destination = workspace / name
             destination.mkdir()
@@ -229,11 +229,11 @@ from toolframe_auth.crypto import new_verifier, verifier
 location = pathlib.Path(toolframe_auth.__file__).resolve()
 assert location.is_relative_to(pathlib.Path(sys.prefix).resolve())
 assert metadata.version("toolframe-auth") == sys.argv[1]
-assert metadata.version("toolframe-sdk") == "0.3.0"
+assert metadata.version("toolframe-sdk") == "0.4.0"
 entry_point, = metadata.distribution("toolframe-auth").entry_points
 assert entry_point.group == "toolframe.plugins" and entry_point.name == "auth"
 assert entry_point.load() is plugin
-assert importlib.util.find_spec("toolframe_storage_sqlite") is None
+assert importlib.util.find_spec("toolframe_sql_sqlite") is None
 assert importlib.util.find_spec("pytest") is None
 salt, hashed = new_verifier("smoke-password")
 assert verifier("smoke-password", salt) == hashed

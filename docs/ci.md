@@ -14,8 +14,8 @@ never used or modified.
 
 | Repository | Required commit |
 | --- | --- |
-| `toolframe-sdk` | `ef91b609137a5fe7bae8e0c893e74b096ff06ffe` |
-| `toolframe-storage-sqlite` | `67c3b0ac4365db81c6c866083330c6405f299dfd` |
+| `toolframe-sdk` | `2cd153ec36c585a9adb5ad566effc2985d9e222d` |
+| `toolframe-sql-sqlite` | `a2764f83840fb8ad71d7eaf138c7e09799ce19bd` |
 
 By default, both repositories are siblings of this checkout. Use `--sdk-repo`
 and `--storage-repo` to point to other local clones. Internet access is required

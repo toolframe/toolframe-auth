@@ -7,7 +7,7 @@ from contextlib import contextmanager
 
 import pytest
 from toolframe_sdk import PluginError, Principal, RuntimeContext, call_context
-from toolframe_storage_sqlite.plugin import ADMIN_SERVICE, SQL_SERVICE, SqliteProvider
+from toolframe_sql_sqlite.plugin import ADMIN_SERVICE, SQL_SERVICE, SqliteProvider
 
 from toolframe_auth.crypto import lookup, new_verifier
 from toolframe_auth.plugin import SERVICE, AuthProvider, plugin
@@ -43,7 +43,7 @@ class StoragePeer:
         self.provider = provider
 
     async def request(self, method, params, timeout=None):
-        assert method == "service.call" and params["alias"] == "storage"
+        assert method == "service.call" and params["alias"] == "sql"
         token = call_context.set(
             {
                 "application_id": "test",
@@ -65,7 +65,7 @@ class StoragePeer:
 async def auth(tmp_path):
     storage = SqliteProvider(
         RuntimeContext(
-            None, plugin_id="storage-sqlite", generation="one", state_directory=tmp_path
+            None, plugin_id="sql-sqlite", generation="one", state_directory=tmp_path
         )
     )
     await storage.activate()

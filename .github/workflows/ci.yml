@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ vars.TOOLFRAME_REPOSITORY_OWNER || github.repository_owner }}/toolframe-sdk
-          ref: ef91b609137a5fe7bae8e0c893e74b096ff06ffe
+          ref: 2cd153ec36c585a9adb5ad566effc2985d9e222d
           path: toolframe-sdk
           token: ${{ secrets.TOOLFRAME_READ_TOKEN || secrets.TOOLFRAME_DEPENDENCIES_TOKEN || github.token }}
           persist-credentials: false
@@ -46,9 +46,9 @@ jobs:
       - name: Check out the pinned SQLite provider
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: ${{ vars.TOOLFRAME_REPOSITORY_OWNER || github.repository_owner }}/toolframe-storage-sqlite
-          ref: 67c3b0ac4365db81c6c866083330c6405f299dfd
-          path: toolframe-storage-sqlite
+          repository: ${{ vars.TOOLFRAME_REPOSITORY_OWNER || github.repository_owner }}/toolframe-sql-sqlite
+          ref: a2764f83840fb8ad71d7eaf138c7e09799ce19bd
+          path: toolframe-sql-sqlite
           token: ${{ secrets.TOOLFRAME_READ_TOKEN || secrets.TOOLFRAME_DEPENDENCIES_TOKEN || github.token }}
           persist-credentials: false
 
