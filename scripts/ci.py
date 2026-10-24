@@ -16,8 +16,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEPENDENCIES = {
-    "toolframe-sdk": "2cd153ec36c585a9adb5ad566effc2985d9e222d",
-    "toolframe-sql-sqlite": "a2764f83840fb8ad71d7eaf138c7e09799ce19bd",
+    "toolframe-sdk": "539ced4dbdf9e303ec0f0205a35d65287a480b2a",
+    "toolframe-sql-sqlite": "d4f3fcf9d8145fd0dab3d57aad8a452fb5aa527b",
 }
 
 
@@ -229,7 +229,7 @@ from toolframe_auth.crypto import new_verifier, verifier
 location = pathlib.Path(toolframe_auth.__file__).resolve()
 assert location.is_relative_to(pathlib.Path(sys.prefix).resolve())
 assert metadata.version("toolframe-auth") == sys.argv[1]
-assert metadata.version("toolframe-sdk") == "0.4.0"
+assert metadata.version("toolframe-sdk") == "0.4.1"
 entry_point, = metadata.distribution("toolframe-auth").entry_points
 assert entry_point.group == "toolframe.plugins" and entry_point.name == "auth"
 assert entry_point.load() is plugin
