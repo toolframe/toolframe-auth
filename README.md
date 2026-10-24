@@ -2,14 +2,14 @@
 
 Authentication and grant decisions for access passwords, federated users and
 revocable agent delegation. This provider owns `auth`'s managed SQL store; it never opens
-database files itself. It requires SDK 0.4.0 and `toolframe.sql`.
+database files itself. It requires SDK 0.4 and `toolframe.sql`.
 
 ## Install
 
 With a running Toolframe application and an active SQL storage provider:
 
 ```sh
-toolframe --home APP plugin add pypi:toolframe-auth==0.3.0 --enable
+toolframe --home APP plugin add pypi:toolframe-auth==0.3.1 --enable
 ```
 
 The [Entry Register template](https://github.com/toolframe/toolframe-core#readme)
