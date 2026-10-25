@@ -68,14 +68,13 @@ the default `GITHUB_TOKEN` cannot read another private repository. Fork pull
 requests cannot access that secret and require publicly readable dependencies
 to pass. Checkout credentials are not persisted.
 
-`publish.yml` supports manual dispatch only, with `testpypi` as the default and
-`pypi` as the other selection. Run it on an existing tag named exactly
-`v<project.version>` (currently `v0.1.1`). A branch ref or mismatched tag fails
-the version gate. The reusable CI workflow validates the selected `github.sha`,
+`publish.yml` publishes to PyPI on manual dispatch only. Run it on an existing
+tag named exactly `v<project.version>`. A branch ref or mismatched tag fails the
+version gate. The reusable CI workflow validates the selected `github.sha`,
 and publishing downloads only that run's validated artifact. The publishing
 job has a 10-minute timeout and is the only job with `id-token: write`. It does
 not rebuild the distributions. Duplicate uploads fail; existing files are not
-silently skipped. Publish runs for the same tag and index are serialized without
+silently skipped. Publish runs for the same tag are serialized without
 cancelling an in-progress run.
 
 ## Publication
