@@ -17,8 +17,11 @@ jobs:
     with:
       release-ref: ${{ github.ref }}
 
+  compatibility:
+    uses: ./.github/workflows/compatibility.yml
+
   publish:
-    needs: validate
+    needs: [validate, compatibility]
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     environment:
