@@ -91,7 +91,7 @@ uv build --wheel
 
 For the same isolated lint, tests, distribution and wheel-install checks used by
 GitHub Actions, run `python3.14 scripts/ci.py`. See [CI and publishing](docs/ci.md)
-for pinned sibling sources, local requirements and TestPyPI/PyPI setup.
+for pinned sibling sources, local requirements and PyPI setup.
 
 Core owns access policy. Its compatible OIDC integration supports
 `access.failure_mode = "closed"` for protected deployments; the default preserves

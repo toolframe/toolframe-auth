@@ -2,21 +2,12 @@ name: Publish Python package
 
 on:
   workflow_dispatch:
-    inputs:
-      repository:
-        description: Package index (run this workflow on a v<project.version> tag)
-        type: choice
-        options:
-          - testpypi
-          - pypi
-        default: testpypi
-        required: true
 
 permissions:
   contents: read
 
 concurrency:
-  group: publish-${{ github.repository }}-${{ github.ref }}-${{ inputs.repository }}
+  group: publish-${{ github.repository }}-${{ github.ref }}-pypi
   cancel-in-progress: false
 
 jobs:
@@ -31,7 +22,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     environment:
-      name: ${{ inputs.repository }}
+      name: pypi
     permissions:
       id-token: write
     steps:
@@ -41,15 +32,7 @@ jobs:
           name: toolframe-auth-dist
           path: dist
 
-      - name: Publish to TestPyPI
-        if: inputs.repository == 'testpypi'
-        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          packages-dir: dist/
-
       - name: Publish to PyPI
-        if: inputs.repository == 'pypi'
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
         with:
           packages-dir: dist/
