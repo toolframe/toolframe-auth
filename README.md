@@ -1,118 +1,50 @@
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme-banner-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/readme-banner-light.png">
+  <img src="docs/assets/readme-banner-light.png" alt="Toolframe Auth — Manage access passwords, browser sessions, federated users and agent grants." width="720">
+</picture>
+</p>
+
 # Toolframe Auth
 
-Authentication and grant decisions for access passwords, federated users and
-revocable agent delegation. This provider owns `auth`'s managed SQL store; it never opens
-database files itself. It requires SDK 0.4 and `toolframe.sql`.
+[![CI on main](https://github.com/toolframe/toolframe-auth/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/toolframe/toolframe-auth/actions/workflows/ci.yml?query=branch%3Amain)
 
-## Install
+Manage access passwords, browser sessions, federated users and agent grants.
+Auth owns identity and permission records; Core enforces access at each entrance.
 
-With a running Toolframe application and an active SQL storage provider:
+## Quick start
+
+In a running [Toolframe application](https://github.com/toolframe/toolframe-core#readme) with an active SQL provider:
 
 ```sh
 toolframe --home APP plugin add pypi:toolframe-auth==0.3.2 --enable
 ```
 
-The [Entry Register template](https://github.com/toolframe/toolframe-core#readme)
-includes Auth and Dashboard Auth. The host resolves the SDK and the plugin's
-isolated environment automatically.
+Install [Dashboard Auth](https://github.com/toolframe/toolframe-dashboard-auth)
+for login and access-management pages. The Entry Register recipe includes both.
+Use Python 3.14+ and SDK 0.4+.
 
-Core supplies the private `password-lookup` key separately from configuration.
-Credential records store a keyed HMAC-SHA256 lookup plus a per-record salted
-scrypt verifier (`N=131072`, `r=8`, `p=1`, 32-byte output). At most two hashes run
-concurrently. Core also limits login attempts. Sessions use random opaque tokens;
-only SHA-256 digests of those high-entropy tokens are persisted. Metadata/list
-responses exclude lookup values, salts and verifiers.
+**Recovery:** retain the managed auth store and private keys together. Existing
+v1 stores need an explicit migration before federated users and grants can be used.
+Removing or reloading Auth retains its data.
 
-The internal `toolframe.auth` service implements login, resolve/touch, logout,
-create/list/update/revoke. Core admits administrators and passes their trusted
-principal/catalog. These methods are not directly published business APIs.
-`toolframe-dashboard-auth` supplies presentation through core's protected API.
+**Access:** Dashboard, MCP and public HTTP methods have separate policies.
+Choose closed failure behavior before exposing a protected application; see
+[Core authentication](https://github.com/toolframe/toolframe-core/blob/main/docs/authentication.md).
 
-New passwords accept 8–32 characters; omitted passwords generate a random
-32-character secret. Existing longer passwords issued by 0.1.0 can still log in.
-The password-length policy preserves existing password records and sessions.
+## Guides
 
-## Federated users and agent grants
+| I want to… | Start here |
+| --- | --- |
+| Manage passwords, users and grants | [Administration](docs/administration.md) |
+| Add federated sign-in | [OIDC Auth](https://github.com/toolframe/toolframe-oidc-auth) |
+| Use PostgreSQL | [Storage requirements](docs/administration.md#postgresql-storage) |
+| Contribute or run checks | [Contributing](CONTRIBUTING.md) · [Verification](docs/ci.md) |
+| Publish a package | [Releasing](docs/releasing.md) |
 
-Enable `toolframe-oidc-auth` for OIDC login. Auth remains the local identity and
-permission authority; it does not implement provider discovery or OAuth endpoints.
-Configure the trusted plugin ID with `identity_provider` (default `oidc-auth`) and
-initial admission with exact `federated_identities` entries:
-
-```toml
-[plugins.auth.config]
-identity_provider = "oidc-auth"
-federated_identities = [
-  { issuer = "https://accounts.google.com", subject = "VERIFIED_SUB", label = "Alice", scopes = ["notes.read"] },
-]
-```
-
-The trusted plugin must supply verified issuer/subject claims. No email matching
-or automatic account merging occurs. The admission entry creates a local user
-once; later permission/disablement changes use the protected user-management API.
-Changing admission configuration does not overwrite existing users. Every user
-gets `system.auth.self`; `system.auth.users` permits bounded administration.
-
-The internal service additionally implements `federated_login`, `users`,
-`user_update`, `grant_create`, `grant_check`, `grants` and `revoke_grant`.
-Core verifies administrative/self-service callers; only the configured identity
-provider may admit external identities or issue/check delegated grants.
-Agent grants include user, issuer, client, resource, explicit business scopes and
-expiry. Grant checks intersect current user permissions. Revocation does not end
-the browser session; disabling a user invalidates sessions and revokes all their
-agent grants. Password and MCP-key credentials retain their independent behavior.
-
-This feature introduces additive **store revision v2**. Existing v1 stores require
-Core's explicit `migrate plan auth` / `migrate apply auth --plan-id ...` workflow
-after staging a compatible Auth build. Back up the store and retained secrets
-first. The migration leaves existing password/session tables intact.
-
-Active secret uniqueness is transactional. Expired/revoked secrets can be reused
-in a new record with a new grant; old sessions remain tied to the old record.
-Revoked records cannot be restored. Editing a grant invalidates its sessions.
-Delegation is limited by the administrator's own scopes, dynamic-business selector
-and expiry. Issued grants do not inherit a revocation dependency on their creator.
-
-Configuration: `session_max_seconds` defaults to 604800; `session_idle_seconds`
-defaults to 86400. Password expiry caps both. Successful logins and authorized
-functional activity update usage; polling and denied attempts do not.
-
-Back up the consistent auth SQLite store and retained private key together. A
-missing key with an existing store is a recovery error, not a reason to regenerate
-the key. Removing/reloading the plugin retains both. Runtime validation uses
-temporary storage and secrets.
-
-```sh
-uv sync
-uv run pytest -q
-uv run ruff check src tests
-uv build --wheel
-```
-
-For the same isolated lint, tests, distribution and wheel-install checks used by
-GitHub Actions, run `python3.14 scripts/ci.py`. See [CI and publishing](docs/ci.md)
-for pinned sibling sources, local requirements and PyPI setup.
-
-Core owns access policy. Its compatible OIDC integration supports
-`access.failure_mode = "closed"` for protected deployments; the default preserves
-legacy public business fallback. MCP, llms and explicitly public business APIs
-have independent policies.
-
-For release validation and Trusted Publisher setup, see [releasing](docs/releasing.md).
+[Releases](https://github.com/toolframe/toolframe-auth/releases)
 
 ## License
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
-
-## PostgreSQL storage
-
-Version 0.3 requires SDK 0.4 and declares PostgreSQL migration SQL alongside the
-unchanged SQLite history. Provision this plugin’s stable store owner with the
-PostgreSQL provider before enabling it. The application still runs one Core;
-retain its private keys and configuration with the application home. Existing
-SQLite records are not imported automatically.
-
-For development hooks and contribution rules, see [Contributing](CONTRIBUTING.md).
-
-Plugin dependencies allow compatible SDK 0.x updates from the declared minimum.
-See the [SDK compatibility policy](https://github.com/toolframe/toolframe-sdk/blob/main/docs/compatibility.md) for API guarantees and minimum/latest verification.
+[Apache 2.0](LICENSE), with [NOTICE](NOTICE).
