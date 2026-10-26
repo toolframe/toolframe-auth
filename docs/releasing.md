@@ -50,7 +50,7 @@ After PyPI publication, verify a clean installation:
 
 ```sh
 uv venv --python 3.14.7 build/consumer
-uv pip install --python build/consumer/bin/python 'toolframe-auth==0.3.1'
+uv pip install --python build/consumer/bin/python 'toolframe-auth==0.3.2'
 uv pip check --python build/consumer/bin/python
 ```
 
