@@ -9,7 +9,7 @@ database files itself. It requires SDK 0.4 and `toolframe.sql`.
 With a running Toolframe application and an active SQL storage provider:
 
 ```sh
-toolframe --home APP plugin add pypi:toolframe-auth==0.3.1 --enable
+toolframe --home APP plugin add pypi:toolframe-auth==0.3.2 --enable
 ```
 
 The [Entry Register template](https://github.com/toolframe/toolframe-core#readme)
